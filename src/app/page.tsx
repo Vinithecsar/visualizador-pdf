@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/Button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Loading from "@/components/Loading";
 
 export default function Home() {
@@ -37,12 +37,10 @@ export default function Home() {
       console.log(exams);
     } catch (e: any) {
       console.error(e);
+    } finally {
+      SetIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    setTimeout(() => SetIsLoading(false), 50);
-  }, [resultExams]);
 
   return (
     <main className="flex flex-col items-center">
@@ -88,34 +86,31 @@ export default function Home() {
             <p className="p-2 text-center">Exames ainda não identificados</p>
           ) : (
             <>
-              {isLoading ? (
-                <Loading />
-              ) : (
-                <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto">
-                  <table className="table-auto border">
-                    <thead>
-                      <tr>
-                        <th className="border px-2">Código</th>
-                        <th className="border">Nome</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {resultExams?.map((exam, index) => {
-                        return (
-                          <tr key={index}>
-                            <td className="max-w-[90px] break-words border-b p-1 text-center">
-                              {exam}
-                            </td>
-                            <td className="max-w-[290px] break-words border-b border-l p-1 px-2">
-                              {exam}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              <Loading isLoading={isLoading} />
+              <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto">
+                <table className="table-auto border">
+                  <thead>
+                    <tr>
+                      <th className="border px-2">Código</th>
+                      <th className="border">Nome</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {resultExams?.map((exam, index) => {
+                      return (
+                        <tr key={index}>
+                          <td className="max-w-[90px] break-words border-b p-1 text-center">
+                            {exam}
+                          </td>
+                          <td className="max-w-[290px] break-words border-b border-l p-1 px-2">
+                            {exam}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </>
           )}
         </div>
