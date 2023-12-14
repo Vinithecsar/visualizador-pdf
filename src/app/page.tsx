@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "@/components/Loading";
 
 export default function Home() {
@@ -29,7 +29,6 @@ export default function Home() {
         method: "POST",
         body: data,
       });
-      SetIsLoading(false);
 
       if (!res.ok) throw new Error(await res.text());
 
@@ -40,6 +39,10 @@ export default function Home() {
       console.error(e);
     }
   };
+
+  useEffect(() => {
+    SetIsLoading(false);
+  }, [resultExams]);
 
   return (
     <main className="flex flex-col items-center">
