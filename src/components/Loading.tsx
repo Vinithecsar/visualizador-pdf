@@ -9,7 +9,6 @@ export default function Loading() {
         height={75}
         width={75}
         alt="Scanning animation"
-        className=""
       />
     </div>
   );

@@ -41,7 +41,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    SetIsLoading(false);
+    setTimeout(() => SetIsLoading(false), 50);
   }, [resultExams]);
 
   return (
