@@ -19,12 +19,12 @@ export default function Home() {
 
   const handleUpload = async () => {
     if (!selectedFile) return;
+    SetIsLoading(true);
 
     try {
       const data = new FormData();
       data.set("file", selectedFile);
 
-      SetIsLoading(true);
       const res = await fetch("/api/uploadExams", {
         method: "POST",
         body: data,
