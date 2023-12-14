@@ -1,5 +1,10 @@
-import { Exam } from "@/app/page";
 import { NextRequest, NextResponse } from "next/server";
+
+interface Exam {
+  success?: boolean;
+  code: number;
+  name: string;
+}
 
 function generateRandomName() {
   const names = [
@@ -24,10 +29,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json([{ success: false }]);
   }
 
-  const NamesArray: [Exam] = [{ success: true, name: file.name, code: 0 }];
-  for (let i = 1; i < 6; i++) {
-    NamesArray.push({ name: generateRandomName(), code: i });
+  // const NamesArray: [Exam] = [{ success: true, name: file.name, code: 0 }];
+  // for (let i = 1; i < 6; i++) {
+  //   NamesArray.push({ name: generateRandomName(), code: i });
+  // }
+
+  // return NextResponse.json(NamesArray);
+
+  const NamesArray: [string] = [`${file.name}`];
+  for (let i = 1; i < 15; i++) {
+    NamesArray.push(generateRandomName());
   }
 
-  return NextResponse.json(NamesArray);
+  return NextResponse.json({ listaExames: NamesArray });
 }
