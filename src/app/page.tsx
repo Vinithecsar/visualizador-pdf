@@ -66,6 +66,9 @@ export default function Home() {
       </div>
 
       {/* Corpo */}
+
+      {isLoading ? <Loading /> : null}
+
       <div className="container mx-6 flex">
         <div className="mr-2 w-2/3 rounded-md bg-[#D9D9D9]">
           {selectedFileUrl ? (
@@ -86,7 +89,6 @@ export default function Home() {
             <p className="p-2 text-center">Exames ainda não identificados</p>
           ) : (
             <>
-              <Loading isLoading={isLoading} />
               <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto">
                 <table className="table-auto border">
                   <thead>
