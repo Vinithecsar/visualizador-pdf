@@ -48,11 +48,6 @@ export default function Home() {
 
   const handleFileChange = async (e: any) => {
     const arquivo: File = e.target.files[0];
-    const novoArquivo = new File([arquivo], "prescricao.jpg", {
-      type: arquivo.type,
-      lastModified: arquivo.lastModified,
-    });
-    const objectURL = URL.createObjectURL(novoArquivo);
 
     if (arquivo.type !== "application/pdf") {
       setError("Apenas arquivos pdf são aceitos!");
@@ -62,6 +57,7 @@ export default function Home() {
       return;
     }
 
+    const objectURL = URL.createObjectURL(arquivo);
     const arquivoJpg = await converPdfToJpg(objectURL);
 
     setResultExams([]);
@@ -123,12 +119,6 @@ export default function Home() {
       <div className="mx-6 flex w-[87.5%]">
         <div className="mr-2 w-2/3 rounded-md bg-[#D9D9D9]">
           {selectedFileUrl ? (
-            // <Image
-            //   src={selectedFileUrl}
-            //   alt="Arquivos com exames"
-            //   width={1920}
-            //   height={852}
-            // />
             <iframe
               src={selectedFileUrl}
               className="aspect-video w-full"
