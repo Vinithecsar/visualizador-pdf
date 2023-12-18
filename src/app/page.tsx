@@ -5,6 +5,8 @@ import { useState } from "react";
 import Loading from "@/components/Loading";
 import ErrorComponent from "@/components/ErrorMessage";
 import ExamsTable from "@/components/ExamsTable";
+import { pdfjs } from "react-pdf";
+import html2canvas from "html2canvas";
 
 export default function Home() {
   const [selectedFile, SetSelectedFile] = useState<File | null>(null);
@@ -13,17 +15,57 @@ export default function Home() {
   const [isLoading, SetIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFileChange = (e: any) => {
-    if (e.target.files[0].type !== "application/pdf") {
+  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+  const converPdfToJpg = async (pdfUrl: string) => {
+    const pdfDocument = await pdfjs.getDocument(pdfUrl).promise;
+    const pdfPage = await pdfDocument.getPage(1);
+    const viewport = pdfPage.getViewport({ scale: 2 });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    await pdfPage.render({ canvasContext: canvas.getContext("2d")!, viewport })
+      .promise;
+
+    document.body.appendChild(canvas);
+
+    const imageDataUrl = await html2canvas(canvas).then((canvas) =>
+      canvas.toDataURL("image/jpg"),
+    );
+
+    document.body.removeChild(canvas);
+
+    const ImgBase64 = imageDataUrl.split(",")[1];
+    const blob = new Blob([ImgBase64], { type: "image/jpg" });
+    const arquivo = new File([blob], "prescricao.jpg", {
+      type: blob.type,
+    });
+
+    return arquivo;
+  };
+
+  const handleFileChange = async (e: any) => {
+    const arquivo: File = e.target.files[0];
+    const novoArquivo = new File([arquivo], "prescricao.jpg", {
+      type: arquivo.type,
+      lastModified: arquivo.lastModified,
+    });
+    const objectURL = URL.createObjectURL(novoArquivo);
+
+    if (arquivo.type !== "application/pdf") {
       setError("Apenas arquivos pdf são aceitos!");
       setTimeout(() => {
         setError(null);
       }, 5000);
       return;
     }
+
+    const arquivoJpg = await converPdfToJpg(objectURL);
+
     setResultExams([]);
-    SetSelectedFile(e.target.files[0]);
-    let objectURL = URL.createObjectURL(e.target.files[0]);
+    SetSelectedFile(arquivoJpg);
     SetSelectedFileUrl(objectURL);
   };
 
@@ -81,7 +123,17 @@ export default function Home() {
       <div className="mx-6 flex w-[87.5%]">
         <div className="mr-2 w-2/3 rounded-md bg-[#D9D9D9]">
           {selectedFileUrl ? (
-            <iframe src={selectedFileUrl} className="w-full" height={852} />
+            // <Image
+            //   src={selectedFileUrl}
+            //   alt="Arquivos com exames"
+            //   width={1920}
+            //   height={852}
+            // />
+            <iframe
+              src={selectedFileUrl}
+              className="aspect-video w-full"
+              height={852}
+            />
           ) : (
             <div className="flex h-[800px] items-center justify-center">
               <p className="text-black">Nenhum PDF foi selecionado!</p>
