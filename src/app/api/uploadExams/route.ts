@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   // return NextResponse.json(NamesArray);
 
   const NamesArray: [string] = [`${file.name}`];
-  for (let i = 1; i < 15; i++) {
+  for (let i = 1; i < 30; i++) {
     NamesArray.push(generateRandomName());
   }
 

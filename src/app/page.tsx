@@ -3,14 +3,24 @@
 import Button from "@/components/Button";
 import { useState } from "react";
 import Loading from "@/components/Loading";
+import ErrorComponent from "@/components/ErrorMessage";
+import ExamsTable from "@/components/ExamsTable";
 
 export default function Home() {
   const [selectedFile, SetSelectedFile] = useState<File | null>(null);
   const [selectedFileUrl, SetSelectedFileUrl] = useState<string>("");
   const [resultExams, setResultExams] = useState<string[]>([]);
   const [isLoading, SetIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = (e: any) => {
+    if (e.target.files[0].type !== "application/pdf") {
+      setError("Apenas arquivos pdf são aceitos!");
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return;
+    }
     setResultExams([]);
     SetSelectedFile(e.target.files[0]);
     let objectURL = URL.createObjectURL(e.target.files[0]);
@@ -34,7 +44,6 @@ export default function Home() {
 
       const exams = await res.json();
       setResultExams(exams.listaExames);
-      console.log(exams);
     } catch (e: any) {
       console.error(e);
     } finally {
@@ -45,7 +54,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center">
       {/* Cabeçalho */}
-      <div className="container mx-6 mb-2 mt-6 flex items-center rounded-md bg-[#D9D9D9]">
+      <div className="mx-6 mb-2 mt-6 flex w-[87.5%] items-center rounded-md bg-[#D9D9D9]">
         <div className="m-auto text-center text-black">
           <h1>Enviar arquivo PDF</h1>
           <input
@@ -66,10 +75,10 @@ export default function Home() {
       </div>
 
       {/* Corpo */}
-
       {isLoading ? <Loading /> : null}
+      {error ? <ErrorComponent error={error} /> : null}
 
-      <div className="container mx-6 flex">
+      <div className="mx-6 flex w-[87.5%]">
         <div className="mr-2 w-2/3 rounded-md bg-[#D9D9D9]">
           {selectedFileUrl ? (
             <iframe src={selectedFileUrl} className="w-full" height={852} />
@@ -88,32 +97,9 @@ export default function Home() {
           {resultExams.length === 0 ? (
             <p className="p-2 text-center">Exames ainda não identificados</p>
           ) : (
-            <>
-              <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto">
-                <table className="table-auto border">
-                  <thead>
-                    <tr>
-                      <th className="border px-2">Código</th>
-                      <th className="border">Nome</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {resultExams?.map((exam, index) => {
-                      return (
-                        <tr key={index}>
-                          <td className="max-w-[90px] break-words border-b p-1 text-center">
-                            {exam}
-                          </td>
-                          <td className="max-w-[290px] break-words border-b border-l p-1 px-2">
-                            {exam}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </>
+            <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto">
+              <ExamsTable resultExams={resultExams} />
+            </div>
           )}
         </div>
       </div>
