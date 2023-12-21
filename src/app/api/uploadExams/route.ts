@@ -8,10 +8,10 @@ interface Exam {
 
 function generateRandomName() {
   const names = [
-    "Alice",
-    "Bob",
-    "Charlie",
-    "David",
+    "GLICOSE",
+    "SÓDIO",
+    "ACETILCOLINA",
+    "GLOBINA",
     "Eva",
     "Frank",
     "Grace",
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   // return NextResponse.json(NamesArray);
 
   const NamesArray: [string] = [`${file.name}`];
-  for (let i = 1; i < 30; i++) {
+  for (let i = 1; i < 15; i++) {
     NamesArray.push(generateRandomName());
   }
 

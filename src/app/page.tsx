@@ -1,52 +1,52 @@
 "use client";
 
 import Button from "@/components/Button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "@/components/Loading";
 import ErrorComponent from "@/components/ErrorMessage";
 import ExamsTable from "@/components/ExamsTable";
-import { pdfjs } from "react-pdf";
-import html2canvas from "html2canvas";
+import { ConvertPdfToJpg } from "@/utils/ConvertPdfToJpg";
+import { SearchForSimilar } from "@/utils/SearchForSimilar";
+
+export interface ApiExam {
+  id: string;
+  nome: string;
+  material: string;
+  instrucoes: string;
+  entrega: string;
+  nomeIdentificado?: string;
+}
 
 export default function Home() {
   const [selectedFile, SetSelectedFile] = useState<File | null>(null);
   const [selectedFileUrl, SetSelectedFileUrl] = useState<string>("");
-  const [resultExams, setResultExams] = useState<string[]>([]);
+  const [resultExams, SetResultExams] = useState<ApiExam[][]>([]);
+  const [ApiExams, SetApiExams] = useState<ApiExam[]>([]);
   const [isLoading, SetIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+  useEffect(() => {
+    const fetchExamesSoftlab = async () => {
+      try {
+        const resExams = await fetch(
+          "https://api.dnacenter.com.br/api/exames",
+          {
+            cache: "force-cache",
+          },
+        );
+        const exams = await resExams.json();
+        SetApiExams(exams);
+      } catch (e) {
+        console.log("erro: ", e);
+      }
+    };
 
-  const converPdfToJpg = async (pdfUrl: string) => {
-    const pdfDocument = await pdfjs.getDocument(pdfUrl).promise;
-    const pdfPage = await pdfDocument.getPage(1);
-    const viewport = pdfPage.getViewport({ scale: 2 });
-
-    const canvas = document.createElement("canvas");
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-
-    await pdfPage.render({ canvasContext: canvas.getContext("2d")!, viewport })
-      .promise;
-
-    document.body.appendChild(canvas);
-
-    const imageDataUrl = await html2canvas(canvas).then((canvas) =>
-      canvas.toDataURL("image/jpg"),
-    );
-
-    document.body.removeChild(canvas);
-
-    const ImgBase64 = imageDataUrl.split(",")[1];
-    const blob = new Blob([ImgBase64], { type: "image/jpg" });
-    const arquivo = new File([blob], "prescricao.jpg", {
-      type: blob.type,
-    });
-
-    return arquivo;
-  };
+    fetchExamesSoftlab();
+  }, []);
 
   const handleFileChange = async (e: any) => {
+    if (!e.target.files[0]) return;
+
     const arquivo: File = e.target.files[0];
 
     if (arquivo.type !== "application/pdf") {
@@ -58,9 +58,9 @@ export default function Home() {
     }
 
     const objectURL = URL.createObjectURL(arquivo);
-    const arquivoJpg = await converPdfToJpg(objectURL);
+    const arquivoJpg = await ConvertPdfToJpg(objectURL);
 
-    setResultExams([]);
+    SetResultExams([]);
     SetSelectedFile(arquivoJpg);
     SetSelectedFileUrl(objectURL);
   };
@@ -80,8 +80,27 @@ export default function Home() {
 
       if (!res.ok) throw new Error(await res.text());
 
-      const exams = await res.json();
-      setResultExams(exams.listaExames);
+      const examsAiResponse = await res.json();
+      const examsToChoose = examsAiResponse.listaExames.map(
+        (nomeExame: string) => {
+          const similar = SearchForSimilar(ApiExams, nomeExame);
+          if (similar.length === 1) {
+            return [
+              { ...similar[0] },
+              {
+                id: "?",
+                nome: "Exame não identificado",
+                entrega: "sem entrega",
+                instrucoes: "sem instrucoes",
+                material: "sem material",
+              },
+            ];
+          } else {
+            return similar;
+          }
+        },
+      );
+      SetResultExams(examsToChoose);
     } catch (e: any) {
       console.error(e);
     } finally {
@@ -117,7 +136,7 @@ export default function Home() {
       {error ? <ErrorComponent error={error} /> : null}
 
       <div className="mx-6 flex w-[87.5%]">
-        <div className="mr-2 w-2/3 rounded-md bg-[#D9D9D9]">
+        <div className="mr-2 w-1/2 rounded-md bg-[#D9D9D9]">
           {selectedFileUrl ? (
             <iframe
               src={selectedFileUrl}
@@ -130,7 +149,7 @@ export default function Home() {
             </div>
           )}
         </div>
-        <div className="w-1/3 rounded-md bg-[#2E8752]">
+        <div className="w-1/2 rounded-md bg-[#2E8752]">
           <h1 className="p-2 text-center text-lg font-semibold">
             {resultExams.length === 0 ? null : resultExams.length} Exames
             resultantes:

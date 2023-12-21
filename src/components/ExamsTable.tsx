@@ -1,22 +1,27 @@
-export default function ExamsTable(props: { resultExams: string[] }) {
+import { ApiExam } from "@/app/page";
+import ExamsTableData from "./ExamsTableData";
+
+export default function ExamsTable(props: { resultExams: ApiExam[][] }) {
   return (
     <table className="table-auto border">
       <thead>
-        <tr>
+        <tr className="bg-blue-950">
+          <th className="border px-2 py-1">Nome identificado</th>
           <th className="border px-2">Código</th>
-          <th className="border">Nome</th>
+          <th className="border px-2">Nome Softlab</th>
+          <th className="border px-2">Mnemônico Softlab</th>
         </tr>
       </thead>
       <tbody>
         {props.resultExams?.map((exam, index) => {
           return (
-            <tr key={index}>
-              <td className="max-w-[90px] break-words border-b p-1 text-center">
-                {exam}
-              </td>
-              <td className="max-w-[290px] break-words border-b border-l p-1 px-2">
-                {exam}
-              </td>
+            <tr
+              key={index}
+              className={`${
+                index % 2 === 0 ? "bg-gray-500" : "bg-gray-400"
+              } text-center`}
+            >
+              <ExamsTableData exam={exam} index={index} />
             </tr>
           );
         })}
