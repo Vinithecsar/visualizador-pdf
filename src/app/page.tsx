@@ -11,9 +11,6 @@ import { SearchForSimilar } from "@/utils/SearchForSimilar";
 export interface ApiExam {
   id: string;
   nome: string;
-  material: string;
-  instrucoes: string;
-  entrega: string;
   nomeIdentificado?: string;
 }
 
@@ -108,6 +105,25 @@ export default function Home() {
     }
   };
 
+  const onAddClick = () => {
+    const tempArray = [
+      [
+        {
+          nomeIdentificado: "Linha criada",
+          id: "?",
+          nome: "Linha a ser criada",
+        },
+        {
+          id: "?",
+          nome: "Exame teste",
+        },
+      ],
+      ...resultExams,
+    ];
+    SetResultExams(tempArray);
+    console.log(resultExams);
+  };
+
   return (
     <main className="flex flex-col items-center">
       {/* Cabeçalho */}
@@ -150,17 +166,27 @@ export default function Home() {
           )}
         </div>
         <div className="w-1/2 rounded-md bg-[#2E8752]">
-          <h1 className="p-2 text-center text-lg font-semibold">
-            {resultExams.length === 0 ? null : resultExams.length} Exames
-            resultantes:
-          </h1>
+          <div className="flex justify-center">
+            <div
+              className="my-3 rounded-md bg-blue-950 p-2 hover:cursor-pointer"
+              onClick={onAddClick}
+            >
+              + Adicionar linha
+            </div>
+            <h1 className="my-auto mr-24 p-2 text-center text-lg font-semibold">
+              {resultExams.length === 0 ? null : resultExams.length} Exames
+              resultantes:
+            </h1>
+          </div>
 
           {resultExams.length === 0 ? (
             <p className="p-2 text-center">Exames ainda não identificados</p>
           ) : (
-            <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto">
-              <ExamsTable resultExams={resultExams} />
-            </div>
+            <>
+              <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto">
+                <ExamsTable resultExams={resultExams} apiExams={ApiExams} />
+              </div>
+            </>
           )}
         </div>
       </div>

@@ -9,9 +9,6 @@ export function SearchForSimilar(ApiExams: ApiExam[], name: string) {
     nomeIdentificado: name,
     id: "?",
     nome: "Escolha um exame",
-    entrega: "sem entrega",
-    instrucoes: "sem instrucoes",
-    material: "sem material",
   });
   return similarExams;
 }

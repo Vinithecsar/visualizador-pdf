@@ -1,7 +1,10 @@
 import { ApiExam } from "@/app/page";
 import ExamsTableData from "./ExamsTableData";
 
-export default function ExamsTable(props: { resultExams: ApiExam[][] }) {
+export default function ExamsTable(props: {
+  resultExams: ApiExam[][];
+  apiExams: ApiExam[];
+}) {
   return (
     <table className="table-auto border">
       <thead>
@@ -21,7 +24,7 @@ export default function ExamsTable(props: { resultExams: ApiExam[][] }) {
                 index % 2 === 0 ? "bg-gray-500" : "bg-gray-400"
               } text-center`}
             >
-              <ExamsTableData exam={exam} index={index} />
+              <ExamsTableData exam={exam} apiExams={props.apiExams} />
             </tr>
           );
         })}
