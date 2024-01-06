@@ -9,12 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/uuid": "^9.0.7",
     "html2canvas": "^1.4.1",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
     "react-pdf": "^7.6.0",
-    "react-select": "^5.8.0"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",

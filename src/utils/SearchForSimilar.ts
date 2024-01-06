@@ -6,7 +6,6 @@ export function SearchForSimilar(ApiExams: ApiExam[], name: string) {
   });
 
   similarExams.unshift({
-    nomeIdentificado: name,
     id: "?",
     nome: "Escolha um exame",
   });

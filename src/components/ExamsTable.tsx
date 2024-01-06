@@ -1,8 +1,9 @@
 import { ApiExam } from "@/app/page";
+import { v4 } from "uuid";
 import ExamsTableData from "./ExamsTableData";
 
-export default function ExamsTable(props: {
-  resultExams: ApiExam[][];
+export default function ExamsTableTest(props: {
+  resultExams: string[];
   apiExams: ApiExam[];
 }) {
   return (
@@ -13,19 +14,18 @@ export default function ExamsTable(props: {
           <th className="border px-2">Código</th>
           <th className="border px-2">Nome Softlab</th>
           <th className="border px-2">Mnemônico Softlab</th>
+          <th className="border px-2">Ações</th>
         </tr>
       </thead>
       <tbody>
         {props.resultExams?.map((exam, index) => {
           return (
-            <tr
-              key={index}
-              className={`${
-                index % 2 === 0 ? "bg-gray-500" : "bg-gray-400"
-              } text-center`}
-            >
-              <ExamsTableData exam={exam} apiExams={props.apiExams} />
-            </tr>
+            <ExamsTableData
+              exam={exam}
+              apiExams={props.apiExams}
+              index={index}
+              key={v4()}
+            />
           );
         })}
       </tbody>

@@ -4,23 +4,26 @@ import Button from "@/components/Button";
 import { useEffect, useState } from "react";
 import Loading from "@/components/Loading";
 import ErrorComponent from "@/components/ErrorMessage";
-import ExamsTable from "@/components/ExamsTable";
 import { ConvertPdfToJpg } from "@/utils/ConvertPdfToJpg";
-import { SearchForSimilar } from "@/utils/SearchForSimilar";
+import useExams from "@/hooks/useExams";
+import ExamsTable from "@/components/ExamsTable";
 
 export interface ApiExam {
   id: string;
   nome: string;
-  nomeIdentificado?: string;
 }
 
 export default function Home() {
   const [selectedFile, SetSelectedFile] = useState<File | null>(null);
   const [selectedFileUrl, SetSelectedFileUrl] = useState<string>("");
-  const [resultExams, SetResultExams] = useState<ApiExam[][]>([]);
   const [ApiExams, SetApiExams] = useState<ApiExam[]>([]);
   const [isLoading, SetIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { resultExams, setResultExams } = useExams();
+  if (!resultExams || !setResultExams) {
+    throw new Error("Erro ao carregar useExams");
+  }
 
   useEffect(() => {
     const fetchExamesSoftlab = async () => {
@@ -57,7 +60,7 @@ export default function Home() {
     const objectURL = URL.createObjectURL(arquivo);
     const arquivoJpg = await ConvertPdfToJpg(objectURL);
 
-    SetResultExams([]);
+    setResultExams!([]);
     SetSelectedFile(arquivoJpg);
     SetSelectedFileUrl(objectURL);
   };
@@ -78,26 +81,7 @@ export default function Home() {
       if (!res.ok) throw new Error(await res.text());
 
       const examsAiResponse = await res.json();
-      const examsToChoose = examsAiResponse.listaExames.map(
-        (nomeExame: string) => {
-          const similar = SearchForSimilar(ApiExams, nomeExame);
-          if (similar.length === 1) {
-            return [
-              { ...similar[0] },
-              {
-                id: "?",
-                nome: "Exame não identificado",
-                entrega: "sem entrega",
-                instrucoes: "sem instrucoes",
-                material: "sem material",
-              },
-            ];
-          } else {
-            return similar;
-          }
-        },
-      );
-      SetResultExams(examsToChoose);
+      setResultExams(examsAiResponse.listaExames);
     } catch (e: any) {
       console.error(e);
     } finally {
@@ -106,21 +90,8 @@ export default function Home() {
   };
 
   const onAddClick = () => {
-    const tempArray = [
-      [
-        {
-          nomeIdentificado: "Linha criada",
-          id: "?",
-          nome: "Linha a ser criada",
-        },
-        {
-          id: "?",
-          nome: "Exame teste",
-        },
-      ],
-      ...resultExams,
-    ];
-    SetResultExams(tempArray);
+    const tempArray = ["Linha Criada", ...resultExams];
+    setResultExams(tempArray);
     console.log(resultExams);
   };
 
@@ -174,12 +145,12 @@ export default function Home() {
               + Adicionar linha
             </div>
             <h1 className="my-auto mr-24 p-2 text-center text-lg font-semibold">
-              {resultExams.length === 0 ? null : resultExams.length} Exames
+              {resultExams?.length === 0 ? null : resultExams?.length} Exames
               resultantes:
             </h1>
           </div>
 
-          {resultExams.length === 0 ? (
+          {resultExams?.length === 0 ? (
             <p className="p-2 text-center">Exames ainda não identificados</p>
           ) : (
             <>
