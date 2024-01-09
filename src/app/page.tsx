@@ -1,12 +1,13 @@
 "use client";
 
 import Button from "@/components/Button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Loading from "@/components/Loading";
 import ErrorComponent from "@/components/ErrorMessage";
 import { ConvertPdfToJpg } from "@/utils/ConvertPdfToJpg";
 import useExams from "@/hooks/useExams";
 import ExamsTable from "@/components/ExamsTable";
+import { v4 } from "uuid";
 
 export interface ApiExam {
   id: string;
@@ -21,6 +22,20 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   const { resultExams, setResultExams } = useExams();
+
+  const examsResultsRef = useRef<
+    { id: string; nome: string; exameEscolhido: ApiExam | null }[]
+  >([
+    {
+      id: "id-1",
+      nome: "Exame teste",
+      exameEscolhido: {
+        id: "?",
+        nome: "Exame teste softlab",
+      },
+    },
+  ]);
+
   if (!resultExams || !setResultExams) {
     throw new Error("Erro ao carregar useExams");
   }
@@ -80,8 +95,14 @@ export default function Home() {
 
       if (!res.ok) throw new Error(await res.text());
 
-      const examsAiResponse = await res.json();
-      setResultExams(examsAiResponse.listaExames);
+      const examsAiResponse: { listaExames: string[] } = await res.json();
+      const listaExames = examsAiResponse.listaExames.map((exame) => {
+        return { idNome: v4(), nome: exame };
+      });
+      setResultExams(listaExames);
+      examsResultsRef.current = listaExames.map((exam) => {
+        return { id: exam.idNome, nome: exam.nome, exameEscolhido: null };
+      });
     } catch (e: any) {
       console.error(e);
     } finally {
@@ -90,9 +111,13 @@ export default function Home() {
   };
 
   const onAddClick = () => {
-    const tempArray = ["Linha Criada", ...resultExams];
+    const tempArray = [{ idNome: v4(), nome: "Linha Criada" }, ...resultExams];
+    examsResultsRef.current.unshift({
+      id: tempArray[0].idNome,
+      nome: tempArray[0].nome,
+      exameEscolhido: null,
+    });
     setResultExams(tempArray);
-    console.log(resultExams);
   };
 
   return (
@@ -155,7 +180,11 @@ export default function Home() {
           ) : (
             <>
               <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto">
-                <ExamsTable resultExams={resultExams} apiExams={ApiExams} />
+                <ExamsTable
+                  resultExams={resultExams}
+                  apiExams={ApiExams}
+                  examsResultsRef={examsResultsRef}
+                />
               </div>
             </>
           )}

@@ -1,10 +1,18 @@
 import { ApiExam } from "@/app/page";
 import { v4 } from "uuid";
 import ExamsTableData from "./ExamsTableData";
+import { MutableRefObject, useEffect } from "react";
 
 export default function ExamsTableTest(props: {
-  resultExams: string[];
+  resultExams: { idNome: string; nome: string }[];
   apiExams: ApiExam[];
+  examsResultsRef: MutableRefObject<
+    {
+      id: string;
+      nome: string;
+      exameEscolhido: ApiExam | null;
+    }[]
+  >;
 }) {
   return (
     <table className="table-auto border">
@@ -24,6 +32,7 @@ export default function ExamsTableTest(props: {
               exam={exam}
               apiExams={props.apiExams}
               index={index}
+              examsResultsRef={props.examsResultsRef}
               key={v4()}
             />
           );
