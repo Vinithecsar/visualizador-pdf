@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
     "@types/uuid": "^9.0.7",
     "html2canvas": "^1.4.1",
     "next": "14.0.4",

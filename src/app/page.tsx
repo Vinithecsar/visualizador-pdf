@@ -15,11 +15,11 @@ export interface ApiExam {
 }
 
 export default function Home() {
-  const [selectedFile, SetSelectedFile] = useState<File | null>(null);
-  const [selectedFileUrl, SetSelectedFileUrl] = useState<string>("");
-  const [ApiExams, SetApiExams] = useState<ApiExam[]>([]);
-  const [isLoading, SetIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFileUrl, setSelectedFileUrl] = useState<string>("");
+  const [apiExams, setApiExams] = useState<ApiExam[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>();
 
   const { resultExams, setResultExams } = useExams();
 
@@ -50,7 +50,7 @@ export default function Home() {
           },
         );
         const exams = await resExams.json();
-        SetApiExams(exams);
+        setApiExams(exams);
       } catch (e) {
         console.log("erro: ", e);
       }
@@ -76,13 +76,13 @@ export default function Home() {
     const arquivoJpg = await ConvertPdfToJpg(objectURL);
 
     setResultExams!([]);
-    SetSelectedFile(arquivoJpg);
-    SetSelectedFileUrl(objectURL);
+    setSelectedFile(arquivoJpg);
+    setSelectedFileUrl(objectURL);
   };
 
   const handleUpload = async () => {
     if (!selectedFile) return;
-    SetIsLoading(true);
+    setIsLoading(true);
 
     try {
       const data = new FormData();
@@ -106,7 +106,7 @@ export default function Home() {
     } catch (e: any) {
       console.error(e);
     } finally {
-      SetIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -161,10 +161,10 @@ export default function Home() {
             </div>
           )}
         </div>
-        <div className="w-1/2 rounded-md bg-[#2E8752]">
-          <div className="flex justify-center">
+        <div className="w-1/2 rounded-md bg-slate-200">
+          <div className="flex justify-center text-black">
             <div
-              className="my-3 rounded-md bg-blue-950 p-2 hover:cursor-pointer"
+              className="my-3 rounded-md bg-blue-950 p-2 text-white hover:cursor-pointer"
               onClick={onAddClick}
             >
               + Adicionar linha
@@ -176,13 +176,15 @@ export default function Home() {
           </div>
 
           {resultExams?.length === 0 ? (
-            <p className="p-2 text-center">Exames ainda não identificados</p>
+            <p className="p-2 text-center text-black">
+              Exames ainda não identificados
+            </p>
           ) : (
             <>
-              <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto">
+              <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto text-black">
                 <ExamsTable
                   resultExams={resultExams}
-                  apiExams={ApiExams}
+                  apiExams={apiExams}
                   examsResultsRef={examsResultsRef}
                 />
               </div>
