@@ -8,6 +8,7 @@ import { ConvertPdfToJpg } from "@/utils/ConvertPdfToJpg";
 import useExams from "@/hooks/useExams";
 import ExamsTable from "@/components/ExamsTable";
 import { v4 } from "uuid";
+import { RenameFile } from "@/utils/RenameFile";
 
 export interface ApiExam {
   id: string;
@@ -19,6 +20,7 @@ export default function Home() {
   const [selectedFileUrl, setSelectedFileUrl] = useState<string>("");
   const [apiExams, setApiExams] = useState<ApiExam[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPdf, setIsPdf] = useState<boolean>(false);
   const [error, setError] = useState<string | null>();
 
   const { resultExams, setResultExams } = useExams();
@@ -64,8 +66,15 @@ export default function Home() {
 
     const arquivo: File = e.target.files[0];
 
-    if (arquivo.type !== "application/pdf") {
-      setError("Apenas arquivos pdf são aceitos!");
+    console.log(arquivo);
+
+    if (
+      arquivo.type !== "application/pdf" &&
+      arquivo.type !== "image/jpg" &&
+      arquivo.type !== "image/jpeg" &&
+      arquivo.type !== "image/png"
+    ) {
+      setError("Apenas arquivos pdf/jpg/jpeg/png são aceitos!");
       setTimeout(() => {
         setError(null);
       }, 5000);
@@ -73,10 +82,19 @@ export default function Home() {
     }
 
     const objectURL = URL.createObjectURL(arquivo);
-    const arquivoJpg = await ConvertPdfToJpg(objectURL);
 
-    setResultExams!([]);
-    setSelectedFile(arquivoJpg);
+    if (arquivo.type === "application/pdf") {
+      const arquivoJpg = await ConvertPdfToJpg(objectURL);
+      setSelectedFile(arquivoJpg);
+      setIsPdf(true);
+    } else {
+      const arquivoRenomeado = RenameFile(arquivo);
+      setSelectedFile(arquivoRenomeado);
+      setIsPdf(false);
+    }
+
+    setResultExams([]);
+
     setSelectedFileUrl(objectURL);
   };
 
@@ -125,7 +143,7 @@ export default function Home() {
       {/* Cabeçalho */}
       <div className="mx-6 mb-2 mt-6 flex w-[87.5%] items-center rounded-md bg-[#D9D9D9]">
         <div className="m-auto text-center text-black">
-          <h1>Enviar arquivo PDF</h1>
+          <h1>Enviar arquivo de prescrição</h1>
           <input
             type="file"
             id="pdfFile"
@@ -149,16 +167,30 @@ export default function Home() {
 
       <div className="mx-6 flex w-[87.5%]">
         <div className="mr-2 w-1/2 rounded-md bg-[#D9D9D9]">
-          {selectedFileUrl ? (
+          {selectedFileUrl && isPdf ? (
             <iframe
               src={selectedFileUrl}
-              className="aspect-video w-full"
+              className="h-[100vh] w-full"
               height={852}
             />
           ) : (
-            <div className="flex h-[800px] items-center justify-center">
-              <p className="text-black">Nenhum PDF foi selecionado!</p>
-            </div>
+            <>
+              {selectedFileUrl ? (
+                <iframe
+                  srcDoc={`<img
+                  src=${selectedFileUrl}
+                  alt="imagem responsiva"
+                  style="width: 100%; height: 100%;"
+                />`}
+                  className="h-[100vh] w-full"
+                  height={852}
+                ></iframe>
+              ) : (
+                <div className="flex h-[800px] items-center justify-center">
+                  <p className="text-black">Nenhum arquivo foi selecionado!</p>
+                </div>
+              )}
+            </>
           )}
         </div>
         <div className="w-1/2 rounded-md bg-slate-200">

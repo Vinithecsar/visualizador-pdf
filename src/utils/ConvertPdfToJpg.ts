@@ -3,7 +3,7 @@ import { pdfjs } from "react-pdf";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-export const ConvertPdfToJpg = async (pdfUrl: string) => {
+export async function ConvertPdfToJpg(pdfUrl: string) {
   const pdfDocument = await pdfjs.getDocument(pdfUrl).promise;
   const pdfPage = await pdfDocument.getPage(1);
   const viewport = pdfPage.getViewport({ scale: 2 });
@@ -30,4 +30,4 @@ export const ConvertPdfToJpg = async (pdfUrl: string) => {
   });
 
   return arquivo;
-};
+}
