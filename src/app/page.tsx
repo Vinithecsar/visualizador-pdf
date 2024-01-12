@@ -66,8 +66,6 @@ export default function Home() {
 
     const arquivo: File = e.target.files[0];
 
-    console.log(arquivo);
-
     if (
       arquivo.type !== "application/pdf" &&
       arquivo.type !== "image/jpg" &&
@@ -113,10 +111,16 @@ export default function Home() {
 
       if (!res.ok) throw new Error(await res.text());
 
-      const examsAiResponse: { listaExames: string[] } = await res.json();
-      const listaExames = examsAiResponse.listaExames.map((exame) => {
-        return { idNome: v4(), nome: exame };
-      });
+      const examsAiResponse: { listaExames: { [key: string]: string[] } } =
+        await res.json();
+
+      const listaExames: { idNome: string; nome: string }[] = Object.keys(
+        examsAiResponse.listaExames,
+      )
+        .filter((exame) => exame.length !== 0)
+        .map((exame) => {
+          return { idNome: v4(), nome: exame };
+        });
       setResultExams(listaExames);
       examsResultsRef.current = listaExames.map((exam) => {
         return { id: exam.idNome, nome: exam.nome, exameEscolhido: null };
@@ -149,6 +153,7 @@ export default function Home() {
             id="pdfFile"
             className="hidden"
             onChange={handleFileChange}
+            accept="application/pdf,image/jpeg,image/jpg,image/png"
           />
         </div>
         <Button className="bg-blue-500">
@@ -168,11 +173,7 @@ export default function Home() {
       <div className="mx-6 flex w-[87.5%]">
         <div className="mr-2 w-1/2 rounded-md bg-[#D9D9D9]">
           {selectedFileUrl && isPdf ? (
-            <iframe
-              src={selectedFileUrl}
-              className="h-[100vh] w-full"
-              height={852}
-            />
+            <iframe src={selectedFileUrl} className="w-full" height={852} />
           ) : (
             <>
               {selectedFileUrl ? (
@@ -182,7 +183,7 @@ export default function Home() {
                   alt="imagem responsiva"
                   style="width: 100%; height: 100%;"
                 />`}
-                  className="h-[100vh] w-full"
+                  className="w-full"
                   height={852}
                 ></iframe>
               ) : (
