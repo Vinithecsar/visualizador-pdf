@@ -171,7 +171,7 @@ export default function Home() {
       {error ? <ErrorComponent error={error} /> : null}
 
       <div className="mx-6 flex w-[87.5%]">
-        <div className="mr-2 w-1/2 rounded-md bg-[#D9D9D9]">
+        <div className="mr-2 w-2/5 rounded-md bg-[#D9D9D9]">
           {selectedFileUrl && isPdf ? (
             <iframe src={selectedFileUrl} className="w-full" height={852} />
           ) : (
@@ -194,7 +194,7 @@ export default function Home() {
             </>
           )}
         </div>
-        <div className="w-1/2 rounded-md bg-slate-200">
+        <div className="w-3/5 rounded-md bg-slate-200">
           <div className="flex justify-center text-black">
             <div
               className="my-3 rounded-md bg-blue-950 p-2 text-white hover:cursor-pointer"

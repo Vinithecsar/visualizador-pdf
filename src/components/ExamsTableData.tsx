@@ -1,6 +1,5 @@
 import { ApiExam } from "@/app/page";
 import useExams from "@/hooks/useExams";
-import { DeleteIcon, EditIcon } from "@/icons";
 import { SearchForSimilar } from "@/utils/SearchForSimilar";
 import { MutableRefObject, useEffect, useState } from "react";
 import { v4 } from "uuid";
@@ -23,7 +22,6 @@ export default function ExamsTableData({
     }[]
   >;
 }) {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chosenExam, setChosenExam] = useState<ApiExam | null>(null);
   const [examsToChoose, setExamsToChoose] = useState<ApiExam[]>([
@@ -48,7 +46,6 @@ export default function ExamsTableData({
     );
 
     setChosenExam(findExamForRef?.exameEscolhido!);
-    setIsLoading(false);
   }, []);
 
   const onSelectChange = (id: string) => {
@@ -115,8 +112,26 @@ export default function ExamsTableData({
               >
                 {examsToChoose[0].id}
               </td>
-              <td className="max-w-[275px] break-words border border-black bg-red-400 p-1">
-                Exame não identificado
+              <td className="max-w-[275px] border border-black bg-red-400 p-1">
+                <div className="flex items-center justify-center">
+                  Exame não identificado
+                  <button onClick={onEdit} className="ml-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </td>
               <td
                 className={`max-w-[90px] break-words border border-black bg-red-400 px-2`}

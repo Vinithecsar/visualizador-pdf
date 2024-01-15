@@ -20,7 +20,7 @@ export default function ExamsTableTest(props: {
           <th className="border border-black px-2 py-1">Nome identificado</th>
           <th className="border border-black px-2">Código</th>
           <th className="border border-black px-2">Nome Softlab</th>
-          <th className="border border-black px-2">Mnemônico Softlab</th>
+          <th className="border border-black px-2">Mnemônico</th>
           <th className="border border-black px-2">Ações</th>
         </tr>
       </thead>

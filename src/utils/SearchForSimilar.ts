@@ -5,11 +5,13 @@ export function SearchForSimilar(ApiExams: ApiExam[], name: string) {
     const exameDaApi = exam.nome
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ - |-/g, " ");
     const nomeRecebido = name
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/-/g, " ");
     return exameDaApi.includes(nomeRecebido);
   });
 
