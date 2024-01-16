@@ -108,33 +108,36 @@ export default function ExamsTableData({
                 {exam.nome}
               </td>
               <td
-                className={`max-w-[90px] break-words border border-black bg-red-400 px-2`}
+                className={`max-w-[90px] break-words border border-black bg-red-400 px-1`}
               >
                 {examsToChoose[0].id}
               </td>
               <td className="max-w-[275px] border border-black bg-red-400 p-1">
-                <div className="flex items-center justify-center">
+                <div
+                  className="flex cursor-pointer items-center justify-center"
+                  onClick={onEdit}
+                >
                   Exame não identificado
-                  <button onClick={onEdit} className="ml-2">
+                  <button className="ml-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth={1.5}
                       stroke="currentColor"
-                      className="h-6 w-6"
+                      className="h-5 w-5"
                     >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25"
+                        d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
                       />
                     </svg>
                   </button>
                 </div>
               </td>
               <td
-                className={`max-w-[90px] break-words border border-black bg-red-400 px-2`}
+                className={`max-w-[90px] break-words border border-black bg-red-400 px-1`}
               >
                 {examsToChoose[0].id}
               </td>
@@ -181,7 +184,7 @@ export default function ExamsTableData({
                 {exam.nome}
               </td>
               <td
-                className={`max-w-[90px] break-words border border-black px-2 `}
+                className={`max-w-[90px] break-words border border-black px-1 `}
               >
                 {examsToChoose[1].id}
               </td>
@@ -189,7 +192,7 @@ export default function ExamsTableData({
                 {examsToChoose[1].nome}
               </td>
               <td
-                className={`max-w-[90px] break-words border border-black px-2`}
+                className={`max-w-[90px] break-words border border-black px-1`}
               >
                 {examsToChoose[1].id}
               </td>
@@ -236,19 +239,15 @@ export default function ExamsTableData({
               <td className="max-w-[275px] break-words border border-black">
                 {exam.nome}
               </td>
-              <td
-                className={`max-w-[90px] break-words border border-black bg-red-400 px-2`}
-              >
+              <td className="max-w-[90px] break-words border border-black bg-yellow-200 px-1">
                 ?
               </td>
-              <td className="max-w-[275px] break-words border border-black p-1">
+              <td className="max-w-[275px] break-words border border-black bg-yellow-200 p-1">
                 <select
                   value={"default"}
                   name="exam"
                   id="exams"
-                  className={`max-w-[259px] text-center ${
-                    index % 2 === 0 ? "bg-gray-200" : "bg-gray-100"
-                  }`}
+                  className="max-w-[259px] bg-yellow-200 text-center"
                   onChange={(e) => onSelectChange(e.target.value)}
                 >
                   <option value="default" hidden disabled>
@@ -257,7 +256,13 @@ export default function ExamsTableData({
                   {examsToChoose.map((ex, ind) => {
                     if (ind !== 0) {
                       return (
-                        <option key={ex.id} value={ex.id}>
+                        <option
+                          key={ex.id}
+                          value={ex.id}
+                          className={`${
+                            index % 2 === 0 ? "bg-gray-300" : "bg-gray-200"
+                          }`}
+                        >
                           {ex.nome}
                         </option>
                       );
@@ -266,7 +271,7 @@ export default function ExamsTableData({
                 </select>
               </td>
               <td
-                className={`max-w-[90px] break-words border border-black bg-red-400 px-2`}
+                className={`max-w-[90px] break-words border border-black bg-yellow-200 px-1`}
               >
                 ?
               </td>
@@ -313,7 +318,7 @@ export default function ExamsTableData({
                 {exam.nome}
               </td>
               <td
-                className={`max-w-[90px] break-words border border-black px-2`}
+                className={`max-w-[90px] break-words border border-black px-1`}
               >
                 {chosenExam.id}
               </td>
@@ -321,13 +326,12 @@ export default function ExamsTableData({
                 {chosenExam.nome}
               </td>
               <td
-                className={`max-w-[90px] break-words border border-black px-2`}
+                className={`max-w-[90px] break-words border border-black px-1`}
               >
                 {chosenExam.id}
               </td>
               <td className="border border-black p-1">
                 <button onClick={onEdit}>
-                  {" "}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
