@@ -5,6 +5,7 @@ function getExams() {
     "": [],
     HEMOGRAMA: ["HEMOGRAMA"],
     COAGULOGRAMA: ["COAGULOGRAMA"],
+    ALBUMINA: [],
     "ABO-RH": [],
     "ANTI-HBS": ["ANTICORPOS ANTI-HBS (HEPATITE B)"],
     "RUBÉOLA-IGG": [],

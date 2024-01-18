@@ -127,8 +127,6 @@ export default function Home() {
       });
     } catch (e: any) {
       console.error(e);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -216,6 +214,7 @@ export default function Home() {
             <>
               <div className="mb-2 flex max-h-[800px] justify-center overflow-y-auto text-black">
                 <ExamsTable
+                  setIsLoading={setIsLoading}
                   resultExams={resultExams}
                   apiExams={apiExams}
                   examsResultsRef={examsResultsRef}

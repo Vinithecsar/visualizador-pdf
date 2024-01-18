@@ -1,16 +1,24 @@
 import { ApiExam } from "@/app/page";
 import useExams from "@/hooks/useExams";
 import { SearchForSimilar } from "@/utils/SearchForSimilar";
-import { MutableRefObject, useEffect, useState } from "react";
+import {
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { v4 } from "uuid";
 import EditModal from "./EditModal";
 
 export default function ExamsTableData({
+  setIsLoading,
   exam,
   apiExams,
   index,
   examsResultsRef,
 }: {
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
   exam: { idNome: string; nome: string };
   apiExams: ApiExam[];
   index: number;
@@ -41,11 +49,24 @@ export default function ExamsTableData({
     const similar = SearchForSimilar(apiExams, exam.nome);
     setExamsToChoose(similar);
 
+    similar.map((ex) => {
+      if (ex.nome === exam.nome) {
+        setChosenExam(ex);
+        const findExamForRef = examsResultsRef.current.find(
+          (ex) => ex.id === exam.idNome,
+        );
+        if (findExamForRef !== undefined) {
+          findExamForRef.exameEscolhido = ex;
+        }
+      }
+    });
+
     const findExamForRef = examsResultsRef.current.find(
       (ex) => ex.id === exam.idNome,
     );
 
     setChosenExam(findExamForRef?.exameEscolhido!);
+    setIsLoading(false);
   }, []);
 
   const onSelectChange = (id: string) => {
@@ -60,13 +81,6 @@ export default function ExamsTableData({
   };
 
   const onEdit = () => {
-    const findExamForRef = examsResultsRef.current.find(
-      (ex) => ex.id === exam.idNome,
-    );
-    if (findExamForRef !== undefined) {
-      findExamForRef.exameEscolhido = null;
-    }
-    setChosenExam(null);
     setIsOpen(true);
   };
 
@@ -117,8 +131,8 @@ export default function ExamsTableData({
                   className="flex cursor-pointer items-center justify-center"
                   onClick={onEdit}
                 >
-                  Exame não identificado
-                  <button className="ml-2">
+                  <div className="w-[93%]">Exame não identificado</div>
+                  <button className="w-[7%]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -136,11 +150,11 @@ export default function ExamsTableData({
                   </button>
                 </div>
               </td>
-              <td
+              {/* <td
                 className={`max-w-[90px] break-words border border-black bg-red-400 px-1`}
               >
                 {examsToChoose[0].id}
-              </td>
+              </td> */}
               <td className="border border-black p-1">
                 <button onClick={onEdit}>
                   <svg
@@ -191,14 +205,13 @@ export default function ExamsTableData({
               <td className="max-w-[275px] break-words border border-black p-1">
                 {examsToChoose[1].nome}
               </td>
-              <td
+              {/* <td
                 className={`max-w-[90px] break-words border border-black px-1`}
               >
                 {examsToChoose[1].id}
-              </td>
+              </td> */}
               <td className="border border-black p-1" key={v4()}>
                 <button onClick={onEdit}>
-                  {" "}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -247,7 +260,7 @@ export default function ExamsTableData({
                   value={"default"}
                   name="exam"
                   id="exams"
-                  className="max-w-[259px] bg-yellow-200 text-center"
+                  className="w-full bg-yellow-200 text-center"
                   onChange={(e) => onSelectChange(e.target.value)}
                 >
                   <option value="default" hidden disabled>
@@ -270,11 +283,11 @@ export default function ExamsTableData({
                   })}
                 </select>
               </td>
-              <td
+              {/* <td
                 className={`max-w-[90px] break-words border border-black bg-yellow-200 px-1`}
               >
                 ?
-              </td>
+              </td> */}
               <td className="border border-black p-1">
                 <button onClick={onEdit}>
                   <svg
@@ -325,11 +338,11 @@ export default function ExamsTableData({
               <td className="max-w-[275px] break-words border border-black p-1">
                 {chosenExam.nome}
               </td>
-              <td
+              {/* <td
                 className={`max-w-[90px] break-words border border-black px-1`}
               >
                 {chosenExam.id}
-              </td>
+              </td> */}
               <td className="border border-black p-1">
                 <button onClick={onEdit}>
                   <svg

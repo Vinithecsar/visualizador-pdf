@@ -1,8 +1,9 @@
 import { ApiExam } from "@/app/page";
 import ExamsTableData from "./ExamsTableData";
-import { MutableRefObject } from "react";
+import { Dispatch, MutableRefObject, SetStateAction } from "react";
 
 export default function ExamsTableTest(props: {
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
   resultExams: { idNome: string; nome: string }[];
   apiExams: ApiExam[];
   examsResultsRef: MutableRefObject<
@@ -20,7 +21,7 @@ export default function ExamsTableTest(props: {
           <th className="border border-black px-2 py-1">Nome identificado</th>
           <th className="border border-black px-2">Código</th>
           <th className="border border-black px-2">Nome Softlab</th>
-          <th className="border border-black px-2">Mnemônico</th>
+          {/* <th className="border border-black px-2">Mnemônico</th> */}
           <th className="border border-black px-2">Ações</th>
         </tr>
       </thead>
@@ -28,6 +29,7 @@ export default function ExamsTableTest(props: {
         {props.resultExams?.map((exam, index) => {
           return (
             <ExamsTableData
+              setIsLoading={props.setIsLoading}
               exam={exam}
               apiExams={props.apiExams}
               index={index}
