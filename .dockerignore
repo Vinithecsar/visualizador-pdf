@@ -1,0 +1,9 @@
+/.vscode/*
+.git
+.gitignore
+.eslintrc.json
+.prettierrc
+/node_modules
+Dockerfile
+.dockerignore
+README.md
